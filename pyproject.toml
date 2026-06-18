@@ -12,7 +12,7 @@ authors = [
     {name = "Gaël Bernard", email = "gael.bernard@epfl.ch"},
     {name = "Aitor Pérez", email = "aitor.perez@epfl.ch"},
 ]
-keywords = ["active-learning", "classification", "embeddings", "hyde", "information-retrieval", "llm"]
+keywords = ["active-learning", "classification", "text-classification", "embeddings", "hyde", "information-retrieval", "llm"]
 classifiers = [
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.11",
