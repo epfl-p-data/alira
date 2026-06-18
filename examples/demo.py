@@ -13,7 +13,7 @@ from alira import ActiveLearner
 from utils import load_data, resolve_embeddings_path, setup_logging
 
 
-def run(dataset: str, query: str) -> None:
+def run(dataset: str, query: str, text_column: str = "text") -> None:
     # Logging
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
     output_dir = Path(f"results/{dataset}-{timestamp}")
@@ -24,6 +24,8 @@ def run(dataset: str, query: str) -> None:
     # Load data and embeddings
     df = load_data(dataset)
     logger.info("Loaded %s rows", len(df))
+    if text_column not in df.columns:
+        raise ValueError(f"Dataset '{dataset}' has no column '{text_column}'")
 
     embedding_path = resolve_embeddings_path(dataset)
     if embedding_path.exists():
@@ -37,7 +39,7 @@ def run(dataset: str, query: str) -> None:
     ################################################################
 
     # Initialise Active Learner
-    learner = ActiveLearner(corpus=df["text"], embeddings=embeddings)
+    learner = ActiveLearner(corpus=df[text_column], embeddings=embeddings)
     logger.info("Embeddings shape: %s", learner.get_embeddings().shape)
 
     # Start training
@@ -57,4 +59,4 @@ def run(dataset: str, query: str) -> None:
 
 
 if __name__ == "__main__":
-    run("movies", "superheroes")
+    run(dataset="movies", query="superheroes")
