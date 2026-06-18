@@ -98,7 +98,7 @@ ActiveLearner(
 
 #### Methods
 
-- `fit(query: str) -> self` — Run the active-learning loop and train the classifier.
+- `fit(query: str) -> Self` — Run the active-learning loop and train the classifier.
 - `predict_proba(corpus=None, embeddings=None) -> pd.Series` — Return predicted probabilities of relevance.
 - `predict(corpus=None, embeddings=None) -> pd.Series` — Return binary predictions.
 
@@ -118,7 +118,10 @@ ActiveLearner(
 ├── examples/
 │   ├── demo.py                   # Example script with logging and CSV output
 │   ├── lab_explorer.py           # Example using external data source
-│   └── compare.py                # Utility to compare result sets
+│   ├── compare.py                # Utility to compare result sets
+│   ├── aists.py                  # Batch runner for AISTS themes
+│   ├── embeddings.py             # Generate and cache embeddings
+│   └── utils.py                  # Shared example utilities
 ├── pyproject.toml
 └── README.md
 ```

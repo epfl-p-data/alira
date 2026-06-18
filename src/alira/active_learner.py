@@ -191,7 +191,7 @@ class ActiveLearner:
         combined_df["cosine_similarity"] = all_embeddings @ synthetic_centroid.T
 
         # A priori probabilities are linear and evenly distributed on [0, 1] based on the cosine_similarity order
-        combined_df["prediction"] = combined_df['cosine_similarity'].rank() / len(combined_df)
+        combined_df["prediction"] = combined_df["cosine_similarity"].rank() / len(combined_df)
         combined_df["prediction_binary"] = combined_df["prediction"] > 0.5
         combined_df["confidence"] = (combined_df["prediction"] - 0.5).abs()
 
@@ -200,7 +200,7 @@ class ActiveLearner:
         # Active Learning loop
         logger.info("Starting active learning loop...")
         classifier = None
-        prev_predictions = combined_df.loc[corpus_mask, 'prediction'].values
+        prev_predictions = combined_df.loc[corpus_mask, "prediction"].values
         for iteration in range(1, self.max_iterations + 1):
             logger.info("Iteration %s: Selecting candidates...", iteration)
             candidates = self._select_candidates(combined_df.loc[corpus_mask & combined_df["gt"].isna()])
@@ -239,7 +239,7 @@ class ActiveLearner:
             logger.info("Iteration %s: Predicted all texts: %s", iteration, pred_dict)
 
             # Positive RMSE
-            predictions = combined_df.loc[corpus_mask, 'prediction'].values
+            predictions = combined_df.loc[corpus_mask, "prediction"].values
             positive_zone = (
                 (prev_predictions >= 0.5) | (predictions >= 0.5)
             )

@@ -1,7 +1,7 @@
 import logging
 
-from pydantic import BaseModel, Field, ValidationError
 from openai import APITimeoutError
+from pydantic import BaseModel, Field, ValidationError
 
 from alira.llms import send_llm_request
 
