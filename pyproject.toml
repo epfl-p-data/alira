@@ -1,0 +1,27 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "alira"
+version = "0.1.0"
+description = "Active Learning Iterative Retrieval Agent – uses HyDE (Hypothetical Document Embeddings) to bootstrap and iteratively discovers relevant documents from large corpora using active learning, LLM validation, and classifier refinement."
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy",
+    "openai",
+    "pandas",
+    "pydantic",
+    "scikit-learn",
+]
+
+[project.optional-dependencies]
+demo = [
+    "python-dotenv",
+    "epfl-data-index",
+    "pyarrow",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/alira"]
