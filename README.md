@@ -1,5 +1,6 @@
 # ALIRA
 
+[![PyPI version](https://img.shields.io/pypi/v/alira.svg)](https://pypi.org/project/alira/)
 ![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
@@ -28,7 +29,17 @@ The result is a ranked list of documents predicted to match the query, requiring
 
 ### Installation
 
+Install from PyPI:
+
 ```bash
+pip install alira
+```
+
+Or clone the repository and install the development version locally:
+
+```bash
+git clone git@github.com:epfl-p-data/alira.git
+cd alira
 pip install -e .
 ```
 
