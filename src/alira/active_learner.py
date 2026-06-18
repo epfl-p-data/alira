@@ -22,6 +22,8 @@ def _normalize_embeddings(
     """Convert embeddings to a 2-D numpy array, handling object arrays of vectors."""
     if embeddings is None:
         return None
+    if isinstance(embeddings, np.ndarray) and embeddings.ndim == 2:
+        return embeddings
     arr = np.array(embeddings)
     if arr.ndim == 1 and arr.dtype == object and len(arr) > 0:
         arr = np.vstack(arr)

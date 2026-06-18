@@ -37,6 +37,9 @@ demo = [
     "epfl-data-index",
     "pyarrow",
 ]
+dev = [
+    "pytest",
+]
 
 [project.urls]
 Homepage = "https://github.com/epfl-p-data/alira"
