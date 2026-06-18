@@ -31,8 +31,8 @@ def main(doc_type: str, query: str) -> None:
     # Fetch data and embeddings
     logger.info("Fetching documents with type `%s`...", doc_type)
     response = edi.fetch_all(doc_type=doc_type)
-    hits = response['hits']['hits']
-    df = pd.DataFrame([hit["_source"] for hit in hits])[['id', 'text', 'embedding']]
+    hits = response["hits"]["hits"]
+    df = pd.DataFrame([hit["_source"] for hit in hits])[["id", "text", "embedding"]]
     logger.info("Fetched %s documents with type %s", len(df), doc_type)
 
     ################################################################
