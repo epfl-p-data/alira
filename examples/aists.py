@@ -5,7 +5,7 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-from examples.demo import run
+from demo import run
 from utils import load_data, resolve_data_path
 
 
