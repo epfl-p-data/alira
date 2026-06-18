@@ -5,7 +5,7 @@ build-backend = "hatchling.build"
 [project]
 name = "alira"
 version = "0.1.0"
-description = "Active Learning Iterative Retrieval Agent: Iteratively discovers relevant documents from large corpora using active learning, LLM validation, and classifier refinement."
+description = "ALIRA classifies a large text corpus according to a natural-language query when exhaustive LLM evaluation is impractical. It iteratively discovers relevant documents using active learning, LLM validation, and classifier refinement."
 readme = "README.md"
 license = {text = "MIT"}
 authors = [

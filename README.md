@@ -1,8 +1,11 @@
 # ALIRA
 
+![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 **Active Learning Iterative Retrieval Agent**
 
-ALIRA uses **HyDE (Hypothetical Document Embeddings)** to bootstrap and iteratively discovers relevant documents from large corpora using active learning, LLM validation, and classifier refinement.
+ALIRA classifies a large text corpus according to a natural-language query when exhaustive LLM evaluation is impractical. It iteratively discovers relevant documents using active learning, LLM validation, and classifier refinement.
 
 ## Overview
 
