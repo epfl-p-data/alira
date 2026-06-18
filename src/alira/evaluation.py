@@ -5,6 +5,10 @@ from pydantic import BaseModel
 from alira.llms import send_llm_request
 
 
+class Evaluation(BaseModel):
+    related: bool
+
+
 async def evaluate_async(
     query: str,
     texts: list[str],
@@ -16,9 +20,6 @@ async def evaluate_async(
         return []
 
     semaphore = asyncio.Semaphore(5)
-
-    class Evaluation(BaseModel):
-        related: bool
 
     if prompt is None:
         prompt = f"""\

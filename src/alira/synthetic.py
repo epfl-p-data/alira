@@ -1,8 +1,15 @@
-from pydantic import BaseModel, ValidationError, Field
+import logging
 
+from pydantic import BaseModel, Field, ValidationError
 from openai import APITimeoutError
 
 from alira.llms import send_llm_request
+
+logger = logging.getLogger(__name__)
+
+
+class TextList(BaseModel):
+    texts: list[str] = Field(..., description="The list of generated texts of the given topic following the specified format.")
 
 
 def generate_synthetic_texts(
@@ -32,10 +39,7 @@ Here are the examples:
 ---
 """
 
-    messages = [{'role': 'user', 'content': prompt}]
-
-    class TextList(BaseModel):
-        texts: list[str] = Field(..., description="The list of generated texts of the given topic following the specified format.")
+    messages = [{"role": "user", "content": prompt}]
 
     for attempt in range(max_retries):
         try:
@@ -43,8 +47,8 @@ Here are the examples:
             if len(response.texts) == n:
                 return response.texts
         except APITimeoutError as e:
-            print(f"Failed to generate texts before timeout. Error: {e}")
+            logger.warning("Failed to generate texts before timeout. Error: %s", e)
         except ValidationError as e:
-            print(f"Failed to generate exactly {n} texts. Error: {e}")
+            logger.warning("Failed to generate exactly %s texts. Error: %s", n, e)
 
     raise ValueError(f"Failed to get exactly {n} texts after {max_retries} attempts")
