@@ -5,8 +5,23 @@ build-backend = "hatchling.build"
 [project]
 name = "alira"
 version = "0.1.0"
-description = "Active Learning Iterative Retrieval Agent – uses HyDE (Hypothetical Document Embeddings) to bootstrap and iteratively discovers relevant documents from large corpora using active learning, LLM validation, and classifier refinement."
+description = "Active Learning Iterative Retrieval Agent: Iteratively discovers relevant documents from large corpora using active learning, LLM validation, and classifier refinement."
 readme = "README.md"
+license = {text = "MIT"}
+authors = [
+    {name = "Gaël Bernard", email = "gael.bernard@epfl.ch"},
+    {name = "Aitor Pérez", email = "aitor.perez@epfl.ch"},
+]
+keywords = ["active-learning", "classification", "embeddings", "hyde", "information-retrieval", "llm"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
 requires-python = ">=3.11"
 dependencies = [
     "numpy",
@@ -22,6 +37,9 @@ demo = [
     "epfl-data-index",
     "pyarrow",
 ]
+
+[project.urls]
+Homepage = "https://github.com/epfl-p-data/alira"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/alira"]
