@@ -1,19 +1,31 @@
 import logging
 import time
+from typing import Self
 
 import numpy as np
 import pandas as pd
-
 from sklearn.cluster import MiniBatchKMeans
 
 from alira.classifiers import LogisticRegressionClassifier
-from alira.synthetic import generate_synthetic_texts
 from alira.evaluation import evaluate
 from alira.llms import send_embedding_request
+from alira.synthetic import generate_synthetic_texts
 
 logger = logging.getLogger(__name__)
 
 _N_FORMAT_EXAMPLES = 5
+
+
+def _normalize_embeddings(
+    embeddings: np.ndarray | pd.Series | None,
+) -> np.ndarray | None:
+    """Convert embeddings to a 2-D numpy array, handling object arrays of vectors."""
+    if embeddings is None:
+        return None
+    arr = np.array(embeddings)
+    if arr.ndim == 1 and arr.dtype == object and len(arr) > 0:
+        arr = np.vstack(arr)
+    return arr
 
 
 class ActiveLearner:
@@ -54,13 +66,7 @@ class ActiveLearner:
             evaluation_prompt: Replaces the default text evaluation prompt
         """
         self.corpus_ = pd.Series(corpus, name="text")
-        if embeddings is not None:
-            arr = np.array(embeddings)
-            if arr.ndim == 1 and arr.dtype == object and len(arr) > 0:
-                arr = np.vstack(arr)
-            self.embeddings_ = arr
-        else:
-            self.embeddings_ = None
+        self.embeddings_ = _normalize_embeddings(embeddings)
         self.n_corpus_ = len(self.corpus_)
         self.n_synthetic = n_synthetic
         self.min_iterations = min_iterations
@@ -128,7 +134,7 @@ class ActiveLearner:
 
         return df.loc[selected[:n_samples]]
 
-    def fit(self, query: str):
+    def fit(self, query: str) -> Self:
         """Run the active-learning loop and train the classifier.
 
         Args:
@@ -162,27 +168,21 @@ class ActiveLearner:
         logger.info("Embedded %s synthetic texts", len(synthetic_embeddings))
 
         # Gather everything in a pd.DataFrame
+        n_synthetic = len(synthetic_texts)
         corpus_df = pd.DataFrame({
             "text": self.corpus_,
             "is_synthetic": False,
-            "gt": pd.NA
+            "gt": pd.NA,
         })
 
-        synthetic_positives_df = pd.DataFrame({
-            "text": synthetic_texts,
+        synthetic_df = pd.DataFrame({
+            "text": synthetic_texts + [""] * n_synthetic,
             "is_synthetic": True,
-            "gt": True
+            "gt": [True] * n_synthetic + [False] * n_synthetic,
         })
-        synthetic_positives_df.index = range(-1, -1 - len(synthetic_positives_df), -1)
+        synthetic_df.index = pd.RangeIndex(start=-1, stop=-1 - 2 * n_synthetic, step=-1)
 
-        synthetic_negatives_df = pd.DataFrame({
-            "text": [""] * len(synthetic_texts),
-            "is_synthetic": True,
-            "gt": False
-        })
-        synthetic_negatives_df.index = range(-1 - len(synthetic_positives_df), -1 - 2 * len(synthetic_positives_df), -1)
-
-        combined_df = pd.concat([synthetic_positives_df, synthetic_negatives_df, corpus_df])
+        combined_df = pd.concat([synthetic_df, corpus_df])
 
         # Compute distance to synthetic centroid
         all_embeddings = np.vstack([synthetic_embeddings, -synthetic_embeddings, corpus_embeddings])
