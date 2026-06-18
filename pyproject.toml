@@ -39,6 +39,7 @@ demo = [
 ]
 dev = [
     "pytest",
+    "build",
 ]
 
 [project.urls]
