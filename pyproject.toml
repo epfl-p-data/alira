@@ -34,7 +34,6 @@ dependencies = [
 [project.optional-dependencies]
 demo = [
     "python-dotenv",
-    "epfl-data-index",
     "pyarrow",
 ]
 dev = [
