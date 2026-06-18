@@ -1,6 +1,8 @@
 import logging
+from typing import Any
 
 from openai import OpenAI, BadRequestError
+from pydantic import BaseModel
 
 from alira.config import CONFIG
 
@@ -37,7 +39,12 @@ def send_embedding_request(texts: list[str]) -> list[list[float]]:
     return embeddings
 
 
-def send_llm_request_schema(messages, response_format=None, max_tokens=None, timeout=30):
+def send_llm_request_schema(
+    messages: list[dict[str, str]],
+    response_format: type[BaseModel] | None = None,
+    max_tokens: int | None = None,
+    timeout: int = 30,
+) -> str | BaseModel:
     response_format_schema = None
     if response_format:
         response_format_schema = {
@@ -64,7 +71,12 @@ def send_llm_request_schema(messages, response_format=None, max_tokens=None, tim
     return content
 
 
-def send_llm_request_parsed(messages, response_format=None, max_tokens=None, timeout=30):
+def send_llm_request_parsed(
+    messages: list[dict[str, str]],
+    response_format: type[BaseModel] | None = None,
+    max_tokens: int | None = None,
+    timeout: int = 30,
+) -> str | BaseModel:
     """Send a chat request and return a parsed Pydantic model directly (or raw text).
 
     Uses the OpenAI SDK's native structured-output support when a Pydantic
@@ -89,7 +101,12 @@ def send_llm_request_parsed(messages, response_format=None, max_tokens=None, tim
     return response.choices[0].message.parsed
 
 
-def send_llm_request(messages, response_format=None, max_tokens=None, timeout=30):
+def send_llm_request(
+    messages: list[dict[str, str]],
+    response_format: type[BaseModel] | None = None,
+    max_tokens: int | None = None,
+    timeout: int = 30,
+) -> str | BaseModel:
     """Send a chat request, trying SDK-native parsing and falling back to manual schema."""
     try:
         return send_llm_request_parsed(messages, response_format, max_tokens, timeout)
