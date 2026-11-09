@@ -18,6 +18,17 @@ def get_client(timeout: int | None = None) -> OpenAI:
     )
 
 
+def get_extra_body() -> dict[str, Any] | None:
+    """Return the request body extension that disables the model's thinking mode.
+
+    `chat_template_kwargs` is a vLLM/SGLang extension that some providers (e.g. OpenAI)
+    reject; set ALIRA_LLM_DISABLE_THINKING=false to stop sending it.
+    """
+    if (CONFIG['ALIRA_LLM_DISABLE_THINKING'] or 'true').strip().lower() in ('false', '0', 'no'):
+        return None
+    return {"chat_template_kwargs": {"enable_thinking": False}}
+
+
 def send_embedding_request(texts: list[str]) -> list[list[float]]:
     logger.info("Sending embedding request for %s texts", len(texts))
     client = get_client()
@@ -62,6 +73,7 @@ def send_llm_request_schema(
         messages=messages,
         response_format=response_format_schema,
         max_tokens=max_tokens,
+        extra_body=get_extra_body(),
     )
     content = response.choices[0].message.content.strip()
 
@@ -89,6 +101,7 @@ def send_llm_request_parsed(
             model=CONFIG['ALIRA_LLM_BASE_MODEL'],
             messages=messages,
             max_tokens=max_tokens,
+            extra_body=get_extra_body(),
         )
         return response.choices[0].message.content.strip()
 
@@ -97,6 +110,7 @@ def send_llm_request_parsed(
         messages=messages,
         response_format=response_format,
         max_tokens=max_tokens,
+        extra_body=get_extra_body(),
     )
     return response.choices[0].message.parsed
 
