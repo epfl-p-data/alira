@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+
+- Disable the thinking mode of reasoning models on chat requests. Evaluations are capped at 16 tokens, so models that think by default (e.g. Qwen3) failed with `LengthFinishReasonError`.
+- New optional `ALIRA_LLM_DISABLE_THINKING` environment variable (default `true`); set it to `false` for providers that reject `chat_template_kwargs`.
+
 ## 0.1.0 (2026-06-18)
 
 - Initial release.

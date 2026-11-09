@@ -12,6 +12,7 @@ ALIRA bootstraps a binary classifier with **HyDE (Hypothetical Document Embeddin
 ## Environment & Secrets
 - LLM credentials are read from environment variables via `alira.config.CONFIG` (a thin wrapper around `os.environ.get`).
 - Required env vars: `ALIRA_LLM_BASE_URL`, `ALIRA_LLM_API_KEY`, `ALIRA_LLM_EMBEDDING_MODEL`, `ALIRA_LLM_BASE_MODEL`.
+- Optional: `ALIRA_LLM_DISABLE_THINKING` (default `true`) disables the thinking mode of reasoning models on every chat request, because evaluations are capped at 16 tokens.
 - **Examples use `python-dotenv`, but the core package does not.** Any new entrypoint script should call `load_dotenv()` itself if it relies on a `.env` file.
 - `.env` is gitignored and private. Don't read it.
 
