@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.3
+
+- Stop capping evaluations at 16 tokens. The answer is a small strict JSON object, and models that reject `max_tokens` (e.g. OpenAI reasoning models such as `gpt-6-luna`) failed on every evaluation.
+
 ## 0.1.2
 
 - Omit unset optional chat parameters instead of sending them as `null`. Strict providers such as the OpenAI API rejected synthetic text generation with `Invalid type for 'max_tokens'`.

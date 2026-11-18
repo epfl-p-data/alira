@@ -35,7 +35,6 @@ Classify the following text as *related* (true) or *not related* (false) with th
                 send_llm_request,
                 messages,
                 response_format=Evaluation,
-                max_tokens=16,
             )
             return response.related
 
