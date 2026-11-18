@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.2
+
+- Omit unset optional chat parameters instead of sending them as `null`. Strict providers such as the OpenAI API rejected synthetic text generation with `Invalid type for 'max_tokens'`.
+
 ## 0.1.1
 
 - Disable the thinking mode of reasoning models on chat requests. Evaluations are capped at 16 tokens, so models that think by default (e.g. Qwen3) failed with `LengthFinishReasonError`.

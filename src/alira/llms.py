@@ -29,6 +29,21 @@ def get_extra_body() -> dict[str, Any] | None:
     return {"chat_template_kwargs": {"enable_thinking": False}}
 
 
+def get_optional_params(max_tokens: int | None) -> dict[str, Any]:
+    """Return the optional chat parameters that are set, omitting the others.
+
+    The OpenAI SDK serialises an explicit `None` as `null`, which strict providers
+    (e.g. the OpenAI API) reject, so unset parameters must be left out entirely.
+    """
+    params: dict[str, Any] = {}
+    if max_tokens is not None:
+        params["max_tokens"] = max_tokens
+    extra_body = get_extra_body()
+    if extra_body is not None:
+        params["extra_body"] = extra_body
+    return params
+
+
 def send_embedding_request(texts: list[str]) -> list[list[float]]:
     logger.info("Sending embedding request for %s texts", len(texts))
     client = get_client()
@@ -72,8 +87,7 @@ def send_llm_request_schema(
         model=CONFIG['ALIRA_LLM_BASE_MODEL'],
         messages=messages,
         response_format=response_format_schema,
-        max_tokens=max_tokens,
-        extra_body=get_extra_body(),
+        **get_optional_params(max_tokens),
     )
     content = response.choices[0].message.content.strip()
 
@@ -100,8 +114,7 @@ def send_llm_request_parsed(
         response = client.chat.completions.create(
             model=CONFIG['ALIRA_LLM_BASE_MODEL'],
             messages=messages,
-            max_tokens=max_tokens,
-            extra_body=get_extra_body(),
+            **get_optional_params(max_tokens),
         )
         return response.choices[0].message.content.strip()
 
@@ -109,8 +122,7 @@ def send_llm_request_parsed(
         model=CONFIG['ALIRA_LLM_BASE_MODEL'],
         messages=messages,
         response_format=response_format,
-        max_tokens=max_tokens,
-        extra_body=get_extra_body(),
+        **get_optional_params(max_tokens),
     )
     return response.choices[0].message.parsed
 
