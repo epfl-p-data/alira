@@ -53,7 +53,7 @@ Set the following environment variables (or use a `.env` file loaded by your ent
 | `ALIRA_LLM_API_KEY` | API key for authentication |
 | `ALIRA_LLM_EMBEDDING_MODEL` | Model name for embedding requests |
 | `ALIRA_LLM_BASE_MODEL` | Model name for chat/evaluation requests |
-| `ALIRA_LLM_DISABLE_THINKING` | Optional, defaults to `true`. Sends `chat_template_kwargs: {"enable_thinking": false}` to turn off the thinking mode of reasoning models (e.g. Qwen3 on vLLM). Set to `false` if your provider rejects this parameter (e.g. the OpenAI API). |
+| `ALIRA_LLM_DISABLE_THINKING` | Optional, defaults to `true`. Sends `chat_template_kwargs: {"enable_thinking": false}` to turn off the thinking mode of reasoning models (e.g. Qwen3 on vLLM). If your provider rejects this parameter (e.g. the OpenAI API), ALIRA retries without it and stops sending it; set to `false` to skip that first rejected request. |
 
 ### Example
 

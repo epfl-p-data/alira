@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.1.4
+
+- Retry chat requests without `chat_template_kwargs` when the provider rejects it, and stop sending it for the rest of the session. Providers such as the OpenAI API now work without setting `ALIRA_LLM_DISABLE_THINKING=false`.
+
 ## 0.1.3
 
 - Stop capping evaluations at 16 tokens. The answer is a small strict JSON object, and models that reject `max_tokens` (e.g. OpenAI reasoning models such as `gpt-6-luna`) failed on every evaluation.

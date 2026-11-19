@@ -1,5 +1,5 @@
 import logging
-from typing import Any
+from typing import Any, Callable
 
 from openai import OpenAI, BadRequestError
 from pydantic import BaseModel
@@ -18,15 +18,36 @@ def get_client(timeout: int | None = None) -> OpenAI:
     )
 
 
+# Set once the provider rejects `chat_template_kwargs`, so later requests skip it.
+_thinking_param_rejected = False
+
+
 def get_extra_body() -> dict[str, Any] | None:
     """Return the request body extension that disables the model's thinking mode.
 
     `chat_template_kwargs` is a vLLM/SGLang extension that some providers (e.g. OpenAI)
-    reject; set ALIRA_LLM_DISABLE_THINKING=false to stop sending it.
+    reject. It is dropped automatically after the first rejection, or never sent if
+    ALIRA_LLM_DISABLE_THINKING=false.
     """
+    if _thinking_param_rejected:
+        return None
     if (CONFIG['ALIRA_LLM_DISABLE_THINKING'] or 'true').strip().lower() in ('false', '0', 'no'):
         return None
     return {"chat_template_kwargs": {"enable_thinking": False}}
+
+
+def _chat(create: Callable[..., Any], max_tokens: int | None, **kwargs: Any) -> Any:
+    """Call a chat completion method, retrying once without `chat_template_kwargs` if rejected."""
+    global _thinking_param_rejected
+    params = get_optional_params(max_tokens)
+    try:
+        return create(**kwargs, **params)
+    except BadRequestError as e:
+        if "extra_body" not in params or "chat_template_kwargs" not in str(e):
+            raise
+        logger.info("Provider rejected chat_template_kwargs; no longer sending it.")
+        _thinking_param_rejected = True
+        return create(**kwargs, **get_optional_params(max_tokens))
 
 
 def get_optional_params(max_tokens: int | None) -> dict[str, Any]:
@@ -83,11 +104,12 @@ def send_llm_request_schema(
         }
 
     client = get_client(timeout=timeout)
-    response = client.chat.completions.create(
+    response = _chat(
+        client.chat.completions.create,
+        max_tokens,
         model=CONFIG['ALIRA_LLM_BASE_MODEL'],
         messages=messages,
         response_format=response_format_schema,
-        **get_optional_params(max_tokens),
     )
     content = response.choices[0].message.content.strip()
 
@@ -111,18 +133,20 @@ def send_llm_request_parsed(
     client = get_client(timeout=timeout)
 
     if response_format is None:
-        response = client.chat.completions.create(
+        response = _chat(
+            client.chat.completions.create,
+            max_tokens,
             model=CONFIG['ALIRA_LLM_BASE_MODEL'],
             messages=messages,
-            **get_optional_params(max_tokens),
         )
         return response.choices[0].message.content.strip()
 
-    response = client.chat.completions.parse(
+    response = _chat(
+        client.chat.completions.parse,
+        max_tokens,
         model=CONFIG['ALIRA_LLM_BASE_MODEL'],
         messages=messages,
         response_format=response_format,
-        **get_optional_params(max_tokens),
     )
     return response.choices[0].message.parsed
 
